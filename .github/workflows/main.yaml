@@ -17,13 +17,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '20.x'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build web app
         run: npm run build
+
+      - name: Add Android platform (if not already added)
+        run: |
+          npx cap add android
 
       - name: Sync Capacitor
         run: npx cap sync android
