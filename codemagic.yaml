@@ -1,38 +1,26 @@
 workflows:
-  android:
+  build_android:
     name: Build Android App
-    max_build_duration: 120
-    instance_type: macos-latest
+    max_build_duration: 60
+    instance_type: linux
     environment:
-      node: "14"
+      vars:
+        NODE_VERSION: "16"
+      node: $NODE_VERSION
     scripts:
-      - name: Install Dependencies
+      - name: Install dependencies
         script: |
           npm install
+      - name: Build web app
+        script: |
+          npm run build
       - name: Sync Capacitor
         script: |
           npx cap sync android
-      - name: Build Android
+      - name: Build Android APK
         script: |
-          npx cap open android && ./gradlew assembleRelease
+          cd android
+          ./gradlew assembleRelease
     artifacts:
-      - build/app/outputs/bundle/release/app-release.aab
-      - build/app/outputs/apk/release/app-release.apk
-  ios:
-    name: Build iOS App
-    max_build_duration: 120
-    instance_type: macos-latest
-    environment:
-      node: "14"
-    scripts:
-      - name: Install Dependencies
-        script: |
-          npm install
-      - name: Sync Capacitor
-        script: |
-          npx cap sync ios
-      - name: Build iOS
-        script: |
-          npx cap open ios && xcodebuild -workspace ios/App.xcworkspace -scheme App -sdk iphoneos -configuration Release build
-    artifacts:
-      - build/ios/ipa/*.ipa
+      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
