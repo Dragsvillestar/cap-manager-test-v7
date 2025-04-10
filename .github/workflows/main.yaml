@@ -25,7 +25,7 @@ jobs:
       - name: Build web app
         run: npm run build
 
-      - name: Add Android platform (if not already added)
+      - name: Add Android platform
         run: |
           npx cap add android
 
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "11"
+          java-version: "17"
 
       - name: Build APK
         run: |
