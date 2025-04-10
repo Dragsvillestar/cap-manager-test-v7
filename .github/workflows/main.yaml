@@ -44,3 +44,12 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+  download-apk:
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Download APK
+      uses: actions/download-artifact@v3
+      with:
+        name: app-debug.apk
+        path: ./downloaded-apk
