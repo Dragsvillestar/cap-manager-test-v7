@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "vite build"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +16,8 @@
     "@capacitor/geolocation": "^7.1.1",
     "@capacitor/ios": "^7.2.0",
     "@transistorsoft/capacitor-background-geolocation": "^7.0.3"
+  },
+  "devDependencies": {
+    "vite": "^6.2.6"
   }
 }
