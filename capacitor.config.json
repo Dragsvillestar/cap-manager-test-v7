@@ -1,0 +1,9 @@
+{
+  "appId": "com.snametech.employeetracker",
+  "appName": "employee-tracker-snametech",
+  "webDir": "www",
+  "server": {
+    "url": "https://employee-tracker-admin.onrender.com/manager",
+    "cleartext": true
+  }
+}
