@@ -1,56 +1,48 @@
-name: Android SauceLabs Sample App
+name: Build Android APK
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'ios/**'
-      - '**.md'
-      - '**/ios.yml'
-defaults:
-  run:
-    working-directory: android
+  workflow_dispatch:
+
 jobs:
-  EspressoBuild:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        node-version: [14.x]
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18
+
       - name: Install dependencies
-        run: yarn install
-      - name: Build Android Espresso Debug Build
-        run: yarn android.espresso
-      - name: Archive Apps
-        uses: actions/upload-artifact@v2
+        run: npm install
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
         with:
-          name: Android SauceLabs Sample App Espresso Tests
-          path: '**/app/build/outputs/apk/**/*.apk'
-  ReleaseBuild:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        node-version: [14.x]
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+          distribution: "temurin"
+          java-version: "11"
+
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+          actions/download-artifact@v4
+          actions/upload-artifact@v4
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: yarn install
-      - name: Build Android Release
-        run: yarn android.release
-      - name: Archive Apps
-        uses: actions/upload-artifact@v2
-        with:
-          name: Android SauceLabs Sample App Release
-          path: '**/app/build/outputs/apk/release/**/*.apk'
+          name: app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+ 
