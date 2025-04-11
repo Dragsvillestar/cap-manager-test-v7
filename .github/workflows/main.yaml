@@ -11,50 +11,64 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository to access the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Set up Node.js to match the version you use in your local dev environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
+      # Install dependencies from package.json
       - name: Install dependencies
         run: npm install
 
+      # Build your web app (assuming you have an npm build script for this)
       - name: Build web app
         run: npm run build
 
+      # Add the Android platform for Capacitor
       - name: Add Android platform
         run: |
           npx cap add android
 
+      # Sync Capacitor to make sure native dependencies are installed
       - name: Sync Capacitor
         run: npx cap sync android
 
+      # Set up JDK 11 (you can change to Java 17 if necessary)
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "17"  # You can change this to "11" if you need Java 11
+          java-version: "11"  # Ensure you are using Java 11
 
+      # Fix Gradle Java version in build.gradle to ensure Java 11 compatibility
       - name: Fix Gradle Java version in build.gradle
         run: |
           sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/capacitor-cordova-android-plugins/build.gradle || true
           sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/app/build.gradle || true
           sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/build.gradle || true
+          sed -i 's/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_21/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_11/g' android/app/build.gradle || true
+          sed -i 's/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_21/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_11/g' android/capacitor-cordova-android-plugins/build.gradle || true
+          sed -i 's/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_21/compileOptions {\n    sourceCompatibility JavaVersion.VERSION_11/g' android/build.gradle || true
 
+      # Build the APK with Gradle
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleDebug
 
+      # Upload the built APK as an artifact for later download
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
+  # Define a second job to download the APK once the build is complete
   download-apk:
     runs-on: ubuntu-latest
     needs: build
