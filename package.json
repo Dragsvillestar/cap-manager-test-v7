@@ -14,8 +14,7 @@
     "@capacitor/core": "^7.2.0",
     "@capacitor/filesystem": "^7.0.1",
     "@capacitor/geolocation": "^7.1.1",
-    "@capacitor/ios": "^7.2.0",
-    "@transistorsoft/capacitor-background-geolocation": "^7.0.3"
+    "@capacitor/ios": "^7.2.0"
   },
   "devDependencies": {
     "vite": "^6.2.6"
