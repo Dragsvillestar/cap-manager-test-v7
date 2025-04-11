@@ -36,7 +36,13 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: "temurin"
-          java-version: "17"
+          java-version: "17"  # You can change this to "11" if you need Java 11
+
+      - name: Fix Gradle Java version in build.gradle
+        run: |
+          sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/capacitor-cordova-android-plugins/build.gradle || true
+          sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/app/build.gradle || true
+          sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_11/g' android/build.gradle || true
 
       - name: Build APK
         run: |
@@ -48,6 +54,7 @@ jobs:
         with:
           name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
   download-apk:
     runs-on: ubuntu-latest
     needs: build
